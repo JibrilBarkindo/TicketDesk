@@ -1,0 +1,27 @@
+@host = http://localhost:5000
+
+### List tickets (with paging + filtering)
+GET {{host}}/api/tickets?status=Open&page=1&pageSize=20
+
+### Create a ticket
+POST {{host}}/api/tickets
+Content-Type: application/json
+
+{
+  "title": "Login page returns 500 error",
+  "description": "Users report a 500 when signing in with SSO.",
+  "priority": "High",
+  "assignedTo": "jibril"
+}
+
+### Get a single ticket (replace the id)
+GET {{host}}/api/tickets/00000000-0000-0000-0000-000000000000
+
+### Move a ticket to InProgress (replace the id)
+PATCH {{host}}/api/tickets/00000000-0000-0000-0000-000000000000/status
+Content-Type: application/json
+
+{ "status": "InProgress" }
+
+### Delete a ticket (replace the id)
+DELETE {{host}}/api/tickets/00000000-0000-0000-0000-000000000000
