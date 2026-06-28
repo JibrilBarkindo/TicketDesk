@@ -9,8 +9,8 @@ public class TicketQueryParameters
     private int _pageSize = 20;
     private int _page = 1;
 
-    public TicketStatus? Status { get; set; }
-    public TicketPriority? Priority { get; set; }
+    public ApplicationStatus? Status { get; set; }
+    public Interest? Priority { get; set; }
     public string? AssignedTo { get; set; }
 
     public int Page

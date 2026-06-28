@@ -1,9 +1,9 @@
 namespace TicketDesk.Api.Domain;
 
-public enum TicketPriority
+public enum Interest
 {
     Low,
     Medium,
     High,
-    Critical
+    Dream
 }

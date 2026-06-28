@@ -22,7 +22,7 @@ public class TicketServiceTests
 
     private static CreateTicketDto SampleCreate(
         string title = "Sample ticket",
-        TicketPriority priority = TicketPriority.Medium) => new()
+        Interest priority = Interest.Medium) => new()
     {
         Title = title,
         Description = "A description with enough characters.",
@@ -35,11 +35,11 @@ public class TicketServiceTests
         await using var db = CreateContext();
         var service = CreateService(db);
 
-        var result = await service.CreateTicketAsync(SampleCreate(priority: TicketPriority.High));
+        var result = await service.CreateTicketAsync(SampleCreate(priority: Interest.High));
 
         result.Id.Should().NotBeEmpty();
-        result.Status.Should().Be(TicketStatus.Open);
-        result.Priority.Should().Be(TicketPriority.High);
+        result.Status.Should().Be(ApplicationStatus.Applied);
+        result.Priority.Should().Be(Interest.High);
         (await db.Tickets.CountAsync()).Should().Be(1);
     }
 
@@ -61,9 +61,9 @@ public class TicketServiceTests
         var service = CreateService(db);
         var created = await service.CreateTicketAsync(SampleCreate());
 
-        var updated = await service.ChangeStatusAsync(created.Id, TicketStatus.InProgress);
+        var updated = await service.ChangeStatusAsync(created.Id, ApplicationStatus.Interviewing);
 
-        updated.Status.Should().Be(TicketStatus.InProgress);
+        updated.Status.Should().Be(ApplicationStatus.Interviewing);
     }
 
     [Fact]
@@ -72,9 +72,9 @@ public class TicketServiceTests
         await using var db = CreateContext();
         var service = CreateService(db);
         var created = await service.CreateTicketAsync(SampleCreate());
-        await service.ChangeStatusAsync(created.Id, TicketStatus.Closed);
+        await service.ChangeStatusAsync(created.Id, ApplicationStatus.Rejected);
 
-        var act = async () => await service.ChangeStatusAsync(created.Id, TicketStatus.InProgress);
+        var act = async () => await service.ChangeStatusAsync(created.Id, ApplicationStatus.Interviewing);
 
         await act.Should().ThrowAsync<DomainValidationException>();
     }
@@ -89,18 +89,18 @@ public class TicketServiceTests
             await service.CreateTicketAsync(SampleCreate($"Open ticket {i}"));
 
         var toResolve = await service.CreateTicketAsync(SampleCreate("Will be resolved"));
-        await service.ChangeStatusAsync(toResolve.Id, TicketStatus.Resolved);
+        await service.ChangeStatusAsync(toResolve.Id, ApplicationStatus.Interviewing);
 
         var page = await service.GetTicketsAsync(new TicketQueryParameters
         {
-            Status = TicketStatus.Open,
+            Status = ApplicationStatus.Applied,
             Page = 1,
             PageSize = 3
         });
 
         page.TotalCount.Should().Be(5);
         page.Items.Should().HaveCount(3);
-        page.Items.Should().OnlyContain(t => t.Status == TicketStatus.Open);
+        page.Items.Should().OnlyContain(t => t.Status == ApplicationStatus.Applied);
         page.TotalPages.Should().Be(2);
     }
 

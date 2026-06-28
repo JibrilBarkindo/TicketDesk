@@ -6,6 +6,6 @@ namespace TicketDesk.Api.Dtos;
 public class UpdateTicketStatusDto
 {
     [Required]
-    [EnumDataType(typeof(TicketStatus))]
-    public TicketStatus Status { get; set; }
+    [EnumDataType(typeof(ApplicationStatus))]
+    public ApplicationStatus Status { get; set; }
 }

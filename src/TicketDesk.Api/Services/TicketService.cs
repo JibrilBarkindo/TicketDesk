@@ -18,15 +18,16 @@ public class TicketService : ITicketService
     }
 
     // Defines which target states are reachable from each current state.
-    private static readonly IReadOnlyDictionary<TicketStatus, TicketStatus[]> AllowedTransitions =
-        new Dictionary<TicketStatus, TicketStatus[]>
-        {
-            [TicketStatus.Open] = new[] { TicketStatus.InProgress, TicketStatus.Resolved, TicketStatus.Closed },
-            [TicketStatus.InProgress] = new[] { TicketStatus.Open, TicketStatus.Resolved, TicketStatus.Closed },
-            [TicketStatus.Resolved] = new[] { TicketStatus.InProgress, TicketStatus.Closed },
-            [TicketStatus.Closed] = Array.Empty<TicketStatus>()
-        };
-
+    private static readonly IReadOnlyDictionary<ApplicationStatus, ApplicationStatus[]> AllowedTransitions =
+    new Dictionary<ApplicationStatus, ApplicationStatus[]>
+    {
+        [ApplicationStatus.Applied] = new[] { ApplicationStatus.Interviewing, ApplicationStatus.Rejected, ApplicationStatus.Withdrawn },
+        [ApplicationStatus.Interviewing] = new[] { ApplicationStatus.Offer, ApplicationStatus.Rejected, ApplicationStatus.Withdrawn },
+        [ApplicationStatus.Offer] = new[] { ApplicationStatus.Accepted, ApplicationStatus.Rejected, ApplicationStatus.Withdrawn },
+        [ApplicationStatus.Accepted] = Array.Empty<ApplicationStatus>(),
+        [ApplicationStatus.Rejected] = Array.Empty<ApplicationStatus>(),
+        [ApplicationStatus.Withdrawn] = Array.Empty<ApplicationStatus>()
+    };
     public async Task<PagedResult<TicketResponseDto>> GetTicketsAsync(
         TicketQueryParameters query, CancellationToken ct = default)
     {
@@ -71,7 +72,7 @@ public class TicketService : ITicketService
             Title = dto.Title.Trim(),
             Description = dto.Description.Trim(),
             Priority = dto.Priority,
-            Status = TicketStatus.Open,
+            Status = ApplicationStatus.Applied,
             AssignedTo = string.IsNullOrWhiteSpace(dto.AssignedTo) ? null : dto.AssignedTo.Trim(),
             CreatedAt = now,
             UpdatedAt = now
@@ -97,7 +98,7 @@ public class TicketService : ITicketService
         return ticket.ToResponseDto();
     }
 
-    public async Task<TicketResponseDto> ChangeStatusAsync(Guid id, TicketStatus newStatus, CancellationToken ct = default)
+    public async Task<TicketResponseDto> ChangeStatusAsync(Guid id, ApplicationStatus newStatus, CancellationToken ct = default)
     {
         var ticket = await _db.Tickets.FirstOrDefaultAsync(t => t.Id == id, ct)
             ?? throw new NotFoundException($"Ticket {id} was not found.");

@@ -13,8 +13,8 @@ public class CreateTicketDto
     [StringLength(2000, MinimumLength = 1)]
     public string Description { get; set; } = string.Empty;
 
-    [EnumDataType(typeof(TicketPriority))]
-    public TicketPriority Priority { get; set; } = TicketPriority.Medium;
+    [EnumDataType(typeof(Interest))]
+    public Interest Priority { get; set; } = Interest.Medium;
 
     [StringLength(100)]
     public string? AssignedTo { get; set; }
