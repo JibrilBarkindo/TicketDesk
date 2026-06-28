@@ -5,7 +5,7 @@ namespace TicketDesk.Api.Mapping;
 
 public static class TicketMappingExtensions
 {
-    public static TicketResponseDto ToResponseDto(this Ticket ticket) => new()
+    public static TicketResponseDto ToResponseDto(this Application ticket) => new()
     {
         Id = ticket.Id,
         Title = ticket.Title,

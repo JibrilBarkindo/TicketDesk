@@ -1,7 +1,7 @@
 namespace TicketDesk.Api.Domain;
 
 /// <summary>A support ticket tracked by the system.</summary>
-public class Ticket
+public class Application
 {
     public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;

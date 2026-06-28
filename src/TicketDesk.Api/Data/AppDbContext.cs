@@ -7,11 +7,11 @@ public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-    public DbSet<Ticket> Tickets => Set<Ticket>();
+    public DbSet<Application> Tickets => Set<Application>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        var ticket = modelBuilder.Entity<Ticket>();
+        var ticket = modelBuilder.Entity<Application>();
 
         ticket.HasKey(t => t.Id);
         ticket.Property(t => t.Title).IsRequired().HasMaxLength(200);

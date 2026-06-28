@@ -65,7 +65,7 @@ public class TicketService : ITicketService
     public async Task<TicketResponseDto> CreateTicketAsync(CreateTicketDto dto, CancellationToken ct = default)
     {
         var now = _clock.GetUtcNow();
-        var ticket = new Ticket
+        var ticket = new Application
         {
             Id = Guid.NewGuid(),
             Title = dto.Title.Trim(),
