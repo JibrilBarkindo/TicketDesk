@@ -3,9 +3,9 @@ using TicketDesk.Api.Dtos;
 
 namespace TicketDesk.Api.Mapping;
 
-public static class TicketMappingExtensions
+public static class ApplicationMappingExtensions
 {
-    public static TicketResponseDto ToResponseDto(this Application ticket) => new()
+    public static ApplicationResponseDto ToResponseDto(this Application ticket) => new()
     {
         Id = ticket.Id,
         Title = ticket.Title,

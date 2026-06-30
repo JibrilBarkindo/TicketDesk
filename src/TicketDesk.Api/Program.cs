@@ -12,7 +12,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(
         builder.Configuration.GetConnectionString("Default") ?? "Data Source=ticketdesk.db"));
 
-builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<IApplicationService, ApplicationService>();
 builder.Services.AddSingleton(TimeProvider.System);
 
 builder.Services

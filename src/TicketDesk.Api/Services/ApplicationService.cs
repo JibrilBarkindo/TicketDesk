@@ -6,12 +6,12 @@ using TicketDesk.Api.Mapping;
 
 namespace TicketDesk.Api.Services;
 
-public class TicketService : ITicketService
+public class ApplicationService : IApplicationService
 {
     private readonly AppDbContext _db;
     private readonly TimeProvider _clock;
 
-    public TicketService(AppDbContext db, TimeProvider clock)
+    public ApplicationService(AppDbContext db, TimeProvider clock)
     {
         _db = db;
         _clock = clock;
@@ -28,10 +28,10 @@ public class TicketService : ITicketService
         [ApplicationStatus.Rejected] = Array.Empty<ApplicationStatus>(),
         [ApplicationStatus.Withdrawn] = Array.Empty<ApplicationStatus>()
     };
-    public async Task<PagedResult<TicketResponseDto>> GetTicketsAsync(
-        TicketQueryParameters query, CancellationToken ct = default)
+    public async Task<PagedResult<ApplicationResponseDto>> GetTicketsAsync(
+        ApplicationQueryParameters query, CancellationToken ct = default)
     {
-        var tickets = _db.Tickets.AsNoTracking();
+        var tickets = _db.Applications.AsNoTracking();
 
         if (query.Status is not null)
             tickets = tickets.Where(t => t.Status == query.Status);
@@ -48,7 +48,7 @@ public class TicketService : ITicketService
             .Take(query.PageSize)
             .ToListAsync(ct);
 
-        return new PagedResult<TicketResponseDto>
+        return new PagedResult<ApplicationResponseDto>
         {
             Items = entities.Select(t => t.ToResponseDto()).ToList(),
             Page = query.Page,
@@ -57,13 +57,13 @@ public class TicketService : ITicketService
         };
     }
 
-    public async Task<TicketResponseDto?> GetTicketByIdAsync(Guid id, CancellationToken ct = default)
+    public async Task<ApplicationResponseDto?> GetTicketByIdAsync(Guid id, CancellationToken ct = default)
     {
-        var ticket = await _db.Tickets.AsNoTracking().FirstOrDefaultAsync(t => t.Id == id, ct);
+        var ticket = await _db.Applications.AsNoTracking().FirstOrDefaultAsync(t => t.Id == id, ct);
         return ticket?.ToResponseDto();
     }
 
-    public async Task<TicketResponseDto> CreateTicketAsync(CreateTicketDto dto, CancellationToken ct = default)
+    public async Task<ApplicationResponseDto> CreateTicketAsync(CreateApplicationDto dto, CancellationToken ct = default)
     {
         var now = _clock.GetUtcNow();
         var ticket = new Application
@@ -78,14 +78,14 @@ public class TicketService : ITicketService
             UpdatedAt = now
         };
 
-        _db.Tickets.Add(ticket);
+        _db.Applications.Add(ticket);
         await _db.SaveChangesAsync(ct);
         return ticket.ToResponseDto();
     }
 
-    public async Task<TicketResponseDto> UpdateTicketAsync(Guid id, UpdateTicketDto dto, CancellationToken ct = default)
+    public async Task<ApplicationResponseDto> UpdateTicketAsync(Guid id, UpdateApplicationDto dto, CancellationToken ct = default)
     {
-        var ticket = await _db.Tickets.FirstOrDefaultAsync(t => t.Id == id, ct)
+        var ticket = await _db.Applications.FirstOrDefaultAsync(t => t.Id == id, ct)
             ?? throw new NotFoundException($"Ticket {id} was not found.");
 
         ticket.Title = dto.Title.Trim();
@@ -98,9 +98,9 @@ public class TicketService : ITicketService
         return ticket.ToResponseDto();
     }
 
-    public async Task<TicketResponseDto> ChangeStatusAsync(Guid id, ApplicationStatus newStatus, CancellationToken ct = default)
+    public async Task<ApplicationResponseDto> ChangeStatusAsync(Guid id, ApplicationStatus newStatus, CancellationToken ct = default)
     {
-        var ticket = await _db.Tickets.FirstOrDefaultAsync(t => t.Id == id, ct)
+        var ticket = await _db.Applications.FirstOrDefaultAsync(t => t.Id == id, ct)
             ?? throw new NotFoundException($"Ticket {id} was not found.");
 
         if (ticket.Status == newStatus)
@@ -118,10 +118,10 @@ public class TicketService : ITicketService
 
     public async Task DeleteTicketAsync(Guid id, CancellationToken ct = default)
     {
-        var ticket = await _db.Tickets.FirstOrDefaultAsync(t => t.Id == id, ct)
+        var ticket = await _db.Applications.FirstOrDefaultAsync(t => t.Id == id, ct)
             ?? throw new NotFoundException($"Ticket {id} was not found.");
 
-        _db.Tickets.Remove(ticket);
+        _db.Applications.Remove(ticket);
         await _db.SaveChangesAsync(ct);
     }
 }

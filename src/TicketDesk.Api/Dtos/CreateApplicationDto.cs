@@ -3,7 +3,7 @@ using TicketDesk.Api.Domain;
 
 namespace TicketDesk.Api.Dtos;
 
-public class CreateTicketDto
+public class CreateApplicationDto
 {
     [Required]
     [StringLength(200, MinimumLength = 3)]

@@ -3,7 +3,7 @@ using TicketDesk.Api.Domain;
 
 namespace TicketDesk.Api.Dtos;
 
-public class UpdateTicketStatusDto
+public class UpdateApplicationStatusDto
 {
     [Required]
     [EnumDataType(typeof(ApplicationStatus))]

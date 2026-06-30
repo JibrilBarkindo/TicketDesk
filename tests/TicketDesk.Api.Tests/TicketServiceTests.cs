@@ -18,9 +18,9 @@ public class TicketServiceTests
         return new AppDbContext(options);
     }
 
-    private static TicketService CreateService(AppDbContext db) => new(db, TimeProvider.System);
+    private static ApplicationService CreateService(AppDbContext db) => new(db, TimeProvider.System);
 
-    private static CreateTicketDto SampleCreate(
+    private static CreateApplicationDto SampleCreate(
         string title = "Sample ticket",
         Interest priority = Interest.Medium) => new()
     {
@@ -40,7 +40,7 @@ public class TicketServiceTests
         result.Id.Should().NotBeEmpty();
         result.Status.Should().Be(ApplicationStatus.Applied);
         result.Priority.Should().Be(Interest.High);
-        (await db.Tickets.CountAsync()).Should().Be(1);
+        (await db.Applications.CountAsync()).Should().Be(1);
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public class TicketServiceTests
         var toResolve = await service.CreateTicketAsync(SampleCreate("Will be resolved"));
         await service.ChangeStatusAsync(toResolve.Id, ApplicationStatus.Interviewing);
 
-        var page = await service.GetTicketsAsync(new TicketQueryParameters
+        var page = await service.GetTicketsAsync(new ApplicationQueryParameters
         {
             Status = ApplicationStatus.Applied,
             Page = 1,
@@ -110,7 +110,7 @@ public class TicketServiceTests
         await using var db = CreateContext();
         var service = CreateService(db);
 
-        var act = async () => await service.UpdateTicketAsync(Guid.NewGuid(), new UpdateTicketDto
+        var act = async () => await service.UpdateTicketAsync(Guid.NewGuid(), new UpdateApplicationDto
         {
             Title = "New title",
             Description = "New description."
@@ -128,6 +128,6 @@ public class TicketServiceTests
 
         await service.DeleteTicketAsync(created.Id);
 
-        (await db.Tickets.CountAsync()).Should().Be(0);
+        (await db.Applications.CountAsync()).Should().Be(0);
     }
 }

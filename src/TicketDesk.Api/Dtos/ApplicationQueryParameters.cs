@@ -3,7 +3,7 @@ using TicketDesk.Api.Domain;
 namespace TicketDesk.Api.Dtos;
 
 /// <summary>Query string parameters for filtering and paging the ticket list.</summary>
-public class TicketQueryParameters
+public class ApplicationQueryParameters
 {
     private const int MaxPageSize = 100;
     private int _pageSize = 20;

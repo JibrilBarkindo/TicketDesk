@@ -2,7 +2,7 @@ using TicketDesk.Api.Domain;
 
 namespace TicketDesk.Api.Dtos;
 
-public class TicketResponseDto
+public class ApplicationResponseDto
 {
     public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;
